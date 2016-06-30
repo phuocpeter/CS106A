@@ -30,7 +30,7 @@ public class Quadratic extends ConsoleProgram {
 	/* Method: calculateSolution() */
 	/**
 	 * Calculates and assigns the two solutions to
-	 * instance variables r1 and r2
+	 * instance variables r1 and r2.
 	 */
 	private void calculateSolutions() {
 		double delta = getDelta();
@@ -40,7 +40,7 @@ public class Quadratic extends ConsoleProgram {
 	
 	/* Method: getDelta() */
 	/**
-	 * Calculates delta by using b^2 - 4ac
+	 * Calculates delta by using b^2 - 4ac.
 	 * @return double delta
 	 */
 	private double getDelta() {
@@ -49,7 +49,7 @@ public class Quadratic extends ConsoleProgram {
 
 	/* Method: displayResults() */
 	/**
-	 * Print the solutions r1 and r2 on screen
+	 * Print the solutions r1 and r2 on screen.
 	 */
 	private void displayResults() {
 		println("The first solution is " + r1);
