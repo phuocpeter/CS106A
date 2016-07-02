@@ -11,8 +11,6 @@
 import stanford.karel.*;
 
 public class StoneMasonKarel extends SuperKarel {
-
-	private boolean done = false;
 	
 	public void run() {
 		while (!done) {
@@ -33,12 +31,21 @@ public class StoneMasonKarel extends SuperKarel {
 		}
 	}
 
+	/* Method: moveToTheNextColumn() */
+	/**
+	 * Moves 4 spaces.
+	 */
 	private void moveToTheNextColumn() {
 		for (int i = 0; i < 4; i++) {
 			move();
 		}
 	}
 
+	/* Method: rebuildTheColumn() */
+	/**
+	 * Moves until faces the wall, puts beepers
+	 * along the way when there's none.
+	 */
 	private void rebuildTheColumn() {
 		while (frontIsClear()) {
 			if (!beepersPresent()) {
@@ -48,4 +55,5 @@ public class StoneMasonKarel extends SuperKarel {
 		}
 	}
 
+	private boolean done = false;
 }

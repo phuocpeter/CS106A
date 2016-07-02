@@ -32,18 +32,34 @@ public class MidpointFindingKarel extends SuperKarel {
 		moveTillBeeper();
 	}
 
+	/* Method: moveTillBeeper */
+	/**
+	 * Moves until there're beepers.
+	 * Precondition: No in the starting point
+	 * Postcondition: Beeper(s) present at that location
+	 */
 	private void moveTillBeeper() {
 		while (!beepersPresent()) {
 			move();
 		}
 	}
 
+	/* Method: findEmptySpace() */
+	/**
+	 * Moves L shape as long as there are beepers.
+	 * Precondition: Beeper(s) present at that location
+	 * Postcondition: No in the starting point
+	 */
 	private void findEmptySpace() {
 		while (beepersPresent()) {
 			moveLShape();
 		}
 	}
 	
+	/* Method: putOrCleanBeepers() */
+	/**
+	 * Picks up beeper or puts beeper if there's none.
+	 */
 	private void putOrCleanBeepers() {
 		putBeepersTowardUpRight();
 		turnAround();
@@ -53,6 +69,11 @@ public class MidpointFindingKarel extends SuperKarel {
 		turnRight();
 	}
 
+	/* Method: putBeepersTowardDownRight() */
+	/**
+	 * Moves L Shape toward downright, picks or puts beepers
+	 * along the way.
+	 */
 	private void putBeepersTowardDownRight() {
 		while (frontIsClear()) {
 			moveLShapeDown();
@@ -65,6 +86,10 @@ public class MidpointFindingKarel extends SuperKarel {
 		
 	}
 
+	/* Method: moveLShapeDown() */
+	/**
+	 * Moves L Shape.
+	 */
 	private void moveLShapeDown() {
 		move();
 		turnRight();
@@ -72,6 +97,11 @@ public class MidpointFindingKarel extends SuperKarel {
 		turnLeft();
 	}
 
+	/* Method: putBeepersTowardUpRight() */
+	/**
+	 * Moves L Shape toward upright, picks or puts beepers
+	 * along the way.
+	 */
 	private void putBeepersTowardUpRight() {
 		while (frontIsClear()) {
 			moveLShape();
@@ -83,6 +113,10 @@ public class MidpointFindingKarel extends SuperKarel {
 		}
 	}
 
+	/* Method: moveLShape() */
+	/**
+	 * Moves L Shape.
+	 */
 	private void moveLShape() {
 		turnLeft();
 		move();
@@ -90,6 +124,10 @@ public class MidpointFindingKarel extends SuperKarel {
 		move();
 	}
 
+	/* Method: moveStraightTillWall() */
+	/**
+	 * Moves as long as the front is clear.
+	 */
 	private void moveStraightTillWall() {
 		while (frontIsClear()) {
 			move();

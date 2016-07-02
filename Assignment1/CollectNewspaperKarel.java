@@ -28,6 +28,10 @@ public class CollectNewspaperKarel extends SuperKarel {
 		turnAround();
 	}
 	
+	/* Method: moveTwoStep() */
+	/**
+	 * Moves double step.
+	 */
 	public void moveTwoStep() {
 		move();
 		move();
