@@ -36,7 +36,7 @@ public class Breakout extends GraphicsProgram {
 	private static final int NBRICKS_PER_ROW = 10;
 
 /** Number of rows of bricks */
-	private static final int NBRICK_ROWS = 10;
+	private static final int NBRICK_ROWS = 5;
 
 /** Separation between bricks */
 	private static final int BRICK_SEP = 4;
@@ -56,23 +56,111 @@ public class Breakout extends GraphicsProgram {
 
 /** Number of turns */
 	private static final int NTURNS = 3;
+	
+	private static final int ANIME_DELAY = 10;
+	
+	private GRect paddle;
+	private GOval ball;
+	private double vx, vy = 3.0;
+	private RandomGenerator rgen = RandomGenerator.getInstance();
 
 /** Runs the Breakout program. */
 	public void run() {
 		setup();
+		waitForClick();
+		startPlay();
 	}
 	
+	/* Method: startPlay() */
+	/** Controls the play phase of the game. */
+	private void startPlay() {
+		vx = rgen.nextDouble(1.0, 3.0);
+		if (rgen.nextBoolean(0.5)) vx = -vx;
+		while (true) {
+			moveBall();
+			checkForCollision();
+		}
+	}
+
+	/* Method: checkForCollision() */
+	/** Checks if the ball collides with anything. */
+	private void checkForCollision() {
+		collideWithWalls();
+		collideWithOthers();
+	}
+
+	/* Method: collideWithOthers() */
+	/** 
+	 * Checks if the ball hits the paddle or bricks.
+	 * Removes the bricks if the ball hit it.
+	 */
+	private void collideWithOthers() {
+		GObject collider = getCollidingObject();
+		if (collider != null) {
+			vy = -vy;
+			if (!collider.equals(paddle)) {
+				remove(collider);
+			}
+		}
+	}
+
+	/* Method: getCollidingObject() */
+	/**
+	 * Checks what objects is at the bounding box of
+	 * the ball.
+	 * @return the object collides with the ball
+	 */
+	private GObject getCollidingObject() {
+		if (getElementAt(ball.getX(), ball.getY()) != null) return getElementAt(ball.getX(), ball.getY());
+		if (getElementAt(ball.getX(), ball.getY() + 2 * BALL_RADIUS) != null) return getElementAt(ball.getX(), ball.getY() + 2 * BALL_RADIUS);
+		if (getElementAt(ball.getX() + 2 * BALL_RADIUS, ball.getY()) != null) return getElementAt(ball.getX() + 2 * BALL_RADIUS, ball.getY());
+		if (getElementAt(ball.getX() + 2 * BALL_RADIUS, ball.getY() + 2 * BALL_RADIUS) != null) return getElementAt(ball.getX() + 2 * BALL_RADIUS, ball.getY() + 2 * BALL_RADIUS);
+		return null;
+	}
+
+	/* Method: collideWithWalls() */
+	/** Checks if the ball hits the walls. */
+	private void collideWithWalls() {
+		if (ball.getX() <= 0 || (ball.getX() + 2 * BALL_RADIUS) >= WIDTH) {
+			vx = -vx;
+		}
+		if (ball.getY() <= 0) {
+			vy = -vy;
+		}
+		if (ball.getY() >= HEIGHT) {
+			remove(ball);
+		}
+	}
+
+	/* Method: moveBall() */
+	/** Moves the ball. */
+	private void moveBall() {
+		ball.move(vx, vy);
+		pause(ANIME_DELAY);
+	}
+
 	/* Method: setup() */
 	/** Setups the game play. */
 	private void setup() {
 		setupBricks();
 		setupPaddle();
+		addMouseListeners();
+		setupBall();
 	}
-	
+
+	/* Method: setupBall() */
+	/** Draws the ball. */
+	private void setupBall() {
+		ball = new GOval(BALL_RADIUS * 2, BALL_RADIUS * 2);
+		ball.setFilled(true);
+		ball.setFillColor(Color.BLACK);
+		add(ball, WIDTH / 2 - ball.getX() / 2, HEIGHT / 2 - ball.getHeight() / 2);
+	}
+
 	/* Method: setupPaddle() */
 	/** Draws the paddle. */
 	private void setupPaddle() {
-		GRect paddle = new GRect(PADDLE_WIDTH, PADDLE_HEIGHT);
+		paddle = new GRect(PADDLE_WIDTH, PADDLE_HEIGHT);
 		paddle.setFilled(true);
 		paddle.setFillColor(Color.BLACK);
 		add(paddle, WIDTH / 2 - PADDLE_WIDTH / 2, HEIGHT - PADDLE_Y_OFFSET);
@@ -131,4 +219,12 @@ public class Breakout extends GraphicsProgram {
 		}
 	}
 
+	/* Method: mouseMoved() */
+	/** Moves the paddle accordingly to the mouse X point. */
+	public void mouseMoved(MouseEvent e) {
+		if (e.getX() >= (PADDLE_WIDTH / 2) && e.getX() <= (WIDTH - PADDLE_WIDTH / 2)) {
+			paddle.setLocation(e.getX() - (PADDLE_WIDTH / 2), paddle.getY());
+		}
+	}
+	
 }
