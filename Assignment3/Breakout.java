@@ -36,7 +36,7 @@ public class Breakout extends GraphicsProgram {
 	private static final int NBRICKS_PER_ROW = 10;
 
 /** Number of rows of bricks */
-	private static final int NBRICK_ROWS = 5;
+	private static final int NBRICK_ROWS = 10;
 
 /** Separation between bricks */
 	private static final int BRICK_SEP = 4;
@@ -59,27 +59,59 @@ public class Breakout extends GraphicsProgram {
 	
 	private static final int ANIME_DELAY = 10;
 	
+	private boolean gameOver = false;
+	private boolean win = false;
+	private int turns = NTURNS;
+	private int bricksLeft = NBRICKS_PER_ROW * NBRICK_ROWS;
 	private GRect paddle;
 	private GOval ball;
 	private double vx, vy = 3.0;
 	private RandomGenerator rgen = RandomGenerator.getInstance();
+    private AudioClip bounceClip = MediaTools.loadAudioClip("bounce.au");
 
+    public static void main(String[] args) {
+    	new Breakout().start(args);
+    }
+    
 /** Runs the Breakout program. */
 	public void run() {
 		setup();
-		waitForClick();
 		startPlay();
 	}
 	
 	/* Method: startPlay() */
 	/** Controls the play phase of the game. */
 	private void startPlay() {
+		waitForClick();
 		vx = rgen.nextDouble(1.0, 3.0);
 		if (rgen.nextBoolean(0.5)) vx = -vx;
-		while (true) {
+		while (!gameOver) {
 			moveBall();
 			checkForCollision();
+			if (bricksLeft == 0) {
+				win = true;
+				gameOver = true;
+			}
 		}
+		endGame();
+	}
+
+	/* Method: doubleSpeedAfter7th() */
+	/** Double the ball vx after 7th hit */
+	private void doubleSpeedAfter7th() {
+		if (bricksLeft == (NBRICKS_PER_ROW * NBRICK_ROWS - 7)) {
+			vx *= 2;
+		}
+	}
+
+	/* Method: endGame() */
+	/** Ends the game. */
+	private void endGame() {
+		String msg = win? "You win" : "You lose";
+		GLabel label = new GLabel(msg);
+		label.setFont("Arial-30");
+		label.setLocation(WIDTH / 2 - label.getWidth() / 2, HEIGHT / 2 - label.getAscent() / 2);
+		add(label);
 	}
 
 	/* Method: checkForCollision() */
@@ -97,10 +129,14 @@ public class Breakout extends GraphicsProgram {
 	private void collideWithOthers() {
 		GObject collider = getCollidingObject();
 		if (collider != null) {
+			bounceClip.play();
 			vy = -vy;
 			if (!collider.equals(paddle)) {
 				remove(collider);
+				bricksLeft--;
+				return;
 			}
+			doubleSpeedAfter7th();
 		}
 	}
 
@@ -122,13 +158,22 @@ public class Breakout extends GraphicsProgram {
 	/** Checks if the ball hits the walls. */
 	private void collideWithWalls() {
 		if (ball.getX() <= 0 || (ball.getX() + 2 * BALL_RADIUS) >= WIDTH) {
+			bounceClip.play();
 			vx = -vx;
 		}
 		if (ball.getY() <= 0) {
+			bounceClip.play();
 			vy = -vy;
 		}
 		if (ball.getY() >= HEIGHT) {
 			remove(ball);
+			turns--;
+			if (turns == 0) {
+				gameOver = true;
+				return;
+			}
+			setupBall();
+			startPlay();
 		}
 	}
 
