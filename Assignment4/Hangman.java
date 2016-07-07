@@ -26,8 +26,13 @@ public class Hangman extends ConsoleProgram {
     public void run() {
     	canvas.reset();
 		println("Welcome to Hangman!");
-		setupWord();
-		gamePlay();
+		try {
+			setupWord();
+			gamePlay();
+		} catch (ErrorException ex) {
+			println("Error: " + ex.getMessage());
+			println("Game Ended.");
+		}
 	}
     
     /* Method: gamePlay() */
@@ -128,12 +133,12 @@ public class Hangman extends ConsoleProgram {
     /** Gets random word from file. */
     private void setupWord(){
 		try {
-			word = lexicon.getWord(2);
+			word = lexicon.getWord(20);
 			for (int i = 0; i < word.length(); i++) {
 				guessString += "-";
 			}
 		} catch(ErrorException ex) {
-			println("Failed to setup word.");
+			throw new ErrorException("No word available.");
 		}
 	}
 

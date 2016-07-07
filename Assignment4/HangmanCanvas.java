@@ -130,7 +130,7 @@ public class HangmanCanvas extends GCanvas {
 	
 	/* Method: drawLeftArm() */
 	/** 
-	 * Draws an arm
+	 * Draws an arm.
 	 * @param left if false draws on right
 	 */
 	private void drawLeftArm(boolean left) {
