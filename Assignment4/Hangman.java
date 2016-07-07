@@ -14,16 +14,27 @@ import java.io.*;
 
 public class Hangman extends ConsoleProgram {
 
+	/** 
+	 * Initialize the canvas to display
+	 * alongside the console program.
+	 */
+	public void init() {
+		canvas = new HangmanCanvas();
+		add(canvas);
+	}
+	
     public void run() {
+    	canvas.reset();
 		println("Welcome to Hangman!");
 		setupWord();
 		gamePlay();
 	}
-
+    
     /* Method: gamePlay() */
     /** Controls the flow of the game. */
     private void gamePlay() {
 		while (!gameOver) {
+			canvas.displayWord(guessString);
 			printInfoMsg();
 			askForInput();
 			checkAnswer();
@@ -64,10 +75,13 @@ public class Hangman extends ConsoleProgram {
 		}
 		if (!strHasWord) {
 			guesses--;
+			canvas.noteIncorrectGuess(currentGuess);
+			canvas.hang(guesses);
 			println("There are no " + currentGuess + "'s in the word.");
 		} else {
 			println("That guess is correct.");
 		}
+		canvas.displayWord(guessString);
 	}
 
     /* Method: replaceStringAtIndex() */
@@ -92,10 +106,10 @@ public class Hangman extends ConsoleProgram {
     	String str;
 		do {
 			str = readLine("Your guess: ");
-			if (str.length() > 1 || str.length() == 0) {
+			if (str.length() > 1 || str.isEmpty()) {
 				println("Illegal input!");
 			}
-		} while(str.length() > 1 || str.length() == 0);
+		} while(str.length() > 1 || str.isEmpty());
 		currentGuess = str.charAt(0);
 		currentGuess = Character.toUpperCase(currentGuess);
 	}
@@ -124,6 +138,7 @@ public class Hangman extends ConsoleProgram {
 	}
 
     private HangmanLexicon lexicon = new HangmanLexicon();
+    private HangmanCanvas canvas;
 	private int guesses = 8;
 	private char currentGuess;
     private String word;
