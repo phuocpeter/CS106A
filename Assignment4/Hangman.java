@@ -5,12 +5,8 @@
  * Assignment #4.
  */
 
-import acm.graphics.*;
 import acm.program.*;
 import acm.util.*;
-
-import java.awt.*;
-import java.io.*;
 
 public class Hangman extends ConsoleProgram {
 
@@ -27,6 +23,7 @@ public class Hangman extends ConsoleProgram {
     	canvas.reset();
 		println("Welcome to Hangman!");
 		try {
+			lexicon = new HangmanLexicon();
 			setupWord();
 			gamePlay();
 		} catch (ErrorException ex) {
@@ -132,17 +129,15 @@ public class Hangman extends ConsoleProgram {
 	/* Method: setupWord() */
     /** Gets random word from file. */
     private void setupWord(){
-		try {
-			word = lexicon.getWord(20);
-			for (int i = 0; i < word.length(); i++) {
-				guessString += "-";
-			}
-		} catch(ErrorException ex) {
-			throw new ErrorException("No word available.");
+		RandomGenerator rgen = RandomGenerator.getInstance();
+		int index = rgen.nextInt(0, lexicon.getWordCount() - 1);
+		word = lexicon.getWord(index);
+		for (int i = 0; i < word.length(); i++) {
+			guessString += "-";
 		}
 	}
 
-    private HangmanLexicon lexicon = new HangmanLexicon();
+    private HangmanLexicon lexicon;
     private HangmanCanvas canvas;
 	private int guesses = 8;
 	private char currentGuess;
