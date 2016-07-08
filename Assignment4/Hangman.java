@@ -10,6 +10,10 @@ import acm.util.*;
 
 public class Hangman extends ConsoleProgram {
 
+	public static void main(String args[]) {
+		new Hangman().start(args);
+	}
+	
 	/** 
 	 * Initialize the canvas to display
 	 * alongside the console program.
