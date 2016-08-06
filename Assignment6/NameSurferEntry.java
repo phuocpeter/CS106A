@@ -7,6 +7,7 @@
  */
 
 import acm.util.*;
+
 import java.util.*;
 
 public class NameSurferEntry implements NameSurferConstants {
@@ -19,7 +20,30 @@ public class NameSurferEntry implements NameSurferConstants {
  * decade.
  */
 	public NameSurferEntry(String line) {
-		// You fill this in //
+		reader = new Scanner(line);
+		parseName();
+		parseRanks();
+	}
+
+	/* Method: parseName() */
+	/**
+	 * Assigns the first parsed word to name.
+	 */
+	private void parseName() {
+		name = reader.next();
+	}
+	
+	/* Method: parseRanks() */
+	/**
+	 * Assigns the line's parsed ranks to ranks array.
+	 */
+	private void parseRanks() {
+		int i = 0;
+		while (reader.hasNext()) {
+			int value = Integer.parseInt(reader.next());
+			ranks[i] = value;
+			i++;
+		}
 	}
 
 /* Method: getName() */
@@ -27,8 +51,7 @@ public class NameSurferEntry implements NameSurferConstants {
  * Returns the name associated with this entry.
  */
 	public String getName() {
-		// You need to turn this stub into a real implementation //
-		return null;
+		return name;
 	}
 
 /* Method: getRank(decade) */
@@ -40,8 +63,8 @@ public class NameSurferEntry implements NameSurferConstants {
  * not appear in a decade, the rank value is 0.
  */
 	public int getRank(int decade) {
-		// You need to turn this stub into a real implementation //
-		return 0;
+		int index = decade / 10 - START_DECADE / 10;
+		return ranks[index];
 	}
 
 /* Method: toString() */
@@ -50,8 +73,17 @@ public class NameSurferEntry implements NameSurferConstants {
  * NameSurferEntry.
  */
 	public String toString() {
-		// You need to turn this stub into a real implementation //
-		return "";
+		String desc = name + " [";
+		for (int i = 0; i < 11; i++) {
+			desc += ranks[i];
+			if (i != 10) desc += " ";
+		}
+		desc += "] ";
+		return desc;
 	}
+	
+	private String name;
+	private int[] ranks = new int[11];
+	private Scanner reader;
 }
 
