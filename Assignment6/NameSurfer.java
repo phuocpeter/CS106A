@@ -9,7 +9,7 @@ import acm.program.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class NameSurfer extends Program implements NameSurferConstants {
+public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
 
 /* Method: init() */
 /**
@@ -17,16 +17,42 @@ public class NameSurfer extends Program implements NameSurferConstants {
  * and initializing the interactors at the bottom of the window.
  */
 	public void init() {
-	    // You fill this in, along with any helper methods //
+	    setupInteractors();
+	}
+
+	/* Method: setupInteractors() */
+	/**
+	 * Adds label, text field and buttons to the SOUTH of the window.
+	 */
+	private void setupInteractors() {
+		nameLabel = new JLabel("Name");
+		add(nameLabel, SOUTH);
+		nameTextField = new JTextField(12);
+		nameTextField.addActionListener(this);
+		add(nameTextField, SOUTH);
+		graphBtn = new JButton("Graph");
+		add(graphBtn, SOUTH);
+		clearBtn = new JButton("Clear");
+		add(clearBtn, SOUTH);
+		addActionListeners();
 	}
 
 /* Method: actionPerformed(e) */
 /**
- * This class is responsible for detecting when the buttons are
- * clicked, so you will have to define a method to respond to
- * button actions.
+ * Responds to the interactions of the user.
  */
 	public void actionPerformed(ActionEvent e) {
-		// You fill this in //
+		if ((e.getSource() == nameTextField) || (e.getSource() == graphBtn)) {
+			println("Graph: " + nameTextField.getText());
+			return;
+		}
+		if (e.getSource() == clearBtn) {
+			println("Clear screen");
+		}
 	}
+	
+	private JLabel nameLabel;
+	private JTextField nameTextField;
+	private JButton graphBtn, clearBtn;
+	
 }
