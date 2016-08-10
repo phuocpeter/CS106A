@@ -6,7 +6,10 @@
  */
 
 import acm.program.*;
+
 import java.awt.event.*;
+import java.io.IOException;
+
 import javax.swing.*;
 
 public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
@@ -18,10 +21,21 @@ public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
  */
 	public void init() {
 	    setupInteractors();
-	    NameSurferEntry a = new NameSurferEntry("Phuoc 0 1 2 3 4 5 6 7 8 9 10");
-	    println(a.toString());
+	    setupDatabase();
 	}
 
+	/* Method: setupDatabase() */
+	/**
+	 * Setups database.
+	 */
+	private void setupDatabase() {
+		try {
+			database = new NameSurferDataBase(NAMES_DATA_FILE);
+		} catch (IOException e) {
+			println("Error: " + e.getMessage());
+		}
+	}
+	
 	/* Method: setupInteractors() */
 	/**
 	 * Adds label, text field and buttons to the SOUTH of the window.
@@ -45,7 +59,13 @@ public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
  */
 	public void actionPerformed(ActionEvent e) {
 		if ((e.getSource() == nameTextField) || (e.getSource() == graphBtn)) {
-			println("Graph: " + nameTextField.getText());
+			String name = nameTextField.getText();
+			NameSurferEntry entry = database.findEntry(name);
+			if (entry == null) {
+				println("Name not found in the database.");
+				return;
+			}
+			println("Graph: " + entry.toString());
 			return;
 		}
 		if (e.getSource() == clearBtn) {
@@ -56,5 +76,6 @@ public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
 	private JLabel nameLabel;
 	private JTextField nameTextField;
 	private JButton graphBtn, clearBtn;
+	private NameSurferDataBase database;
 	
 }
