@@ -19,15 +19,16 @@ public class NameSurferGraph extends GCanvas
 	* Creates a new NameSurferGraph object that displays the data.
 	*/
 	public NameSurferGraph() {
+		entriesList = new ArrayList<NameSurferEntry>();
 		addComponentListener(this);
-		//	 You fill in the rest //
 	}
 	
 	/**
 	* Clears the list of name surfer entries stored inside this class.
 	*/
 	public void clear() {
-		//	 You fill this in //
+		entriesList.clear();
+		update();
 	}
 	
 	/* Method: addEntry(entry) */
@@ -37,7 +38,8 @@ public class NameSurferGraph extends GCanvas
 	* simply stores the entry; the graph is drawn by calling update.
 	*/
 	public void addEntry(NameSurferEntry entry) {
-		// You fill this in //
+		entriesList.add(entry);
+		update();
 	}
 	
 	
@@ -53,21 +55,93 @@ public class NameSurferGraph extends GCanvas
 		this.removeAll();
 		drawGrid();
 		drawLabels();
+		drawList();
 	}
 	
+	/* Method: drawList() */
+	/**
+	 * Draws all entries in the list.
+	 */
+	private void drawList() {
+		Iterator<NameSurferEntry> entriesIterator = entriesList.iterator();
+		while (entriesIterator.hasNext()) {
+			graphEntry(entriesIterator.next());
+		}
+	}
+
+	/* Method: increaseColourIndex() */
+	/**
+	 * Determines the next colour to use.
+	 * @param index the index of the entry in entriesList
+	 * @return index of the colour to use
+	 */
+	private int getColourIndex(int index) {
+		index++;
+		int newIndex = index % 4;
+		if (newIndex == 0) {
+			return 3;
+		}
+		return newIndex - 1;
+	}
+
+	/* Method: graphEntry() */
+	/**
+	 * Graphs the entry on the canvas.
+	 * @param entry the entry to graph
+	 */
+	private void graphEntry(NameSurferEntry entry) {
+		int coefficient = 0;
+		for (int decade = 1900; decade < 2000; decade += 10) {
+			int value = entry.getRank(decade);
+			int nextValue = entry.getRank(decade + 10);
+			double x1 = coefficient * spacePerDecade;
+			double x2 = (coefficient + 1) * spacePerDecade;
+			double y1 = (value == 0)? (height - GRAPH_MARGIN_SIZE) : getPointOnGraph(value);
+			double y2 = (nextValue == 0)? (height - GRAPH_MARGIN_SIZE) : getPointOnGraph(nextValue);
+			GLine line = new GLine(x1, y1, x2, y2);
+			
+			int currentColourIndex = getColourIndex(entriesList.indexOf(entry));
+			
+			line.setColor(colourCycle[currentColourIndex]);
+			add(line);
+			
+			// Add label
+			String labelText;
+			if (value == 0) {
+				labelText = entry.getName() + " *";
+			} else {
+				labelText = entry.getName() + " " + value;
+			}
+			GLabel label = new GLabel(labelText);
+			label.setColor(colourCycle[currentColourIndex]);
+			add(label, x1 + 2, y1 - 2);
+			coefficient++;
+		}
+	}
+
+	/* Method: getPointOnGraph() */
+	/**
+	 * Converts double value into percentage to display on graph.
+	 * @param value the value to convert
+	 * @return the point to display;
+	 */
+	private double getPointOnGraph(int value) {
+		double graphLineHeight = height - 2 * GRAPH_MARGIN_SIZE;
+		double percentage = value * 100.0 / MAX_RANK;
+		double valueToGraph = graphLineHeight * percentage / 100;
+		double point = GRAPH_MARGIN_SIZE + valueToGraph;
+		return point;
+	}
+
 	/* Method: drawLabels() */
 	/**
 	 * Draws the decade labels.
 	 */
 	private void drawLabels() {
-		int height = this.getHeight();
-		int width = this.getWidth();
-		double spacePerDecade = width / NDECADES;
-		
 		int coefficient = 0;
-		for (int year = 1900; year <= 2000; year += 10) {
-			GLabel label = new GLabel("" + year);
-			double x = (coefficient * spacePerDecade) + (spacePerDecade / 2) - (label.getWidth() / 2);
+		for (int decade = 1900; decade <= 2000; decade += 10) {
+			GLabel label = new GLabel("" + decade);
+			double x = (coefficient * spacePerDecade) + 2;
 			double y = (height - (GRAPH_MARGIN_SIZE / 2)) + (label.getAscent() / 2);
 			label.setLocation(x, y);
 			add(label);
@@ -80,10 +154,6 @@ public class NameSurferGraph extends GCanvas
 	 * Draws the grids.
 	 */
 	private void drawGrid() {
-		int height = this.getHeight();
-		int width = this.getWidth();
-		double spacePerDecade = width / NDECADES;
-		
 		// Draw horizontal borders
 		GLine topBorder = new GLine(0, GRAPH_MARGIN_SIZE, width, GRAPH_MARGIN_SIZE);
 		GLine bottomBorder = new GLine(0, height - GRAPH_MARGIN_SIZE, width, height - GRAPH_MARGIN_SIZE);
@@ -100,7 +170,16 @@ public class NameSurferGraph extends GCanvas
 	/* Implementation of the ComponentListener interface */
 	public void componentHidden(ComponentEvent e) { }
 	public void componentMoved(ComponentEvent e) { }
-	public void componentResized(ComponentEvent e) { update(); }
+	public void componentResized(ComponentEvent e) {
+		height = this.getHeight();
+		width = this.getWidth();
+		spacePerDecade = width / NDECADES;
+		update(); 
+	}
 	public void componentShown(ComponentEvent e) { }
-
+	
+	private ArrayList<NameSurferEntry> entriesList;
+	private int height, width;
+	private double spacePerDecade;
+	private Color[] colourCycle = {Color.BLACK, Color.RED, Color.BLUE, Color.MAGENTA};
 }

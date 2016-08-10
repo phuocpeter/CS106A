@@ -34,7 +34,6 @@ public class NameSurfer extends Program implements NameSurferConstants {
 		try {
 			database = new NameSurferDataBase(NAMES_DATA_FILE);
 		} catch (IOException e) {
-			//println("Error: " + e.getMessage());
 		}
 	}
 	
@@ -64,14 +63,13 @@ public class NameSurfer extends Program implements NameSurferConstants {
 			String name = nameTextField.getText();
 			NameSurferEntry entry = database.findEntry(name);
 			if (entry == null) {
-				//println("Name not found in the database.");
 				return;
 			}
-			//println("Graph: " + entry.toString());
+			graph.addEntry(entry);
 			return;
 		}
 		if (e.getSource() == clearBtn) {
-			//println("Clear screen");
+			graph.clear();
 		}
 	}
 	
