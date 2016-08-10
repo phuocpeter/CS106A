@@ -12,7 +12,7 @@ import java.io.IOException;
 
 import javax.swing.*;
 
-public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
+public class NameSurfer extends Program implements NameSurferConstants {
 
 /* Method: init() */
 /**
@@ -22,6 +22,8 @@ public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
 	public void init() {
 	    setupInteractors();
 	    setupDatabase();
+	    graph = new NameSurferGraph();
+	    add(graph);
 	}
 
 	/* Method: setupDatabase() */
@@ -32,7 +34,7 @@ public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
 		try {
 			database = new NameSurferDataBase(NAMES_DATA_FILE);
 		} catch (IOException e) {
-			println("Error: " + e.getMessage());
+			//println("Error: " + e.getMessage());
 		}
 	}
 	
@@ -62,14 +64,14 @@ public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
 			String name = nameTextField.getText();
 			NameSurferEntry entry = database.findEntry(name);
 			if (entry == null) {
-				println("Name not found in the database.");
+				//println("Name not found in the database.");
 				return;
 			}
-			println("Graph: " + entry.toString());
+			//println("Graph: " + entry.toString());
 			return;
 		}
 		if (e.getSource() == clearBtn) {
-			println("Clear screen");
+			//println("Clear screen");
 		}
 	}
 	
@@ -77,5 +79,6 @@ public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
 	private JTextField nameTextField;
 	private JButton graphBtn, clearBtn;
 	private NameSurferDataBase database;
+	private NameSurferGraph graph;
 	
 }

@@ -63,7 +63,7 @@ public class NameSurferEntry implements NameSurferConstants {
  * not appear in a decade, the rank value is 0.
  */
 	public int getRank(int decade) {
-		int index = decade / 10 - START_DECADE / 10;
+		int index = decade / (NDECADES - 1) - START_DECADE / (NDECADES - 1);
 		return ranks[index];
 	}
 
@@ -74,16 +74,16 @@ public class NameSurferEntry implements NameSurferConstants {
  */
 	public String toString() {
 		String desc = name + " [";
-		for (int i = 0; i < 11; i++) {
+		for (int i = 0; i < NDECADES; i++) {
 			desc += ranks[i];
-			if (i != 10) desc += " ";
+			if (i != (NDECADES - 1)) desc += " ";
 		}
 		desc += "] ";
 		return desc;
 	}
 	
 	private String name;
-	private int[] ranks = new int[11];
+	private int[] ranks = new int[NDECADES];
 	private Scanner reader;
 }
 
