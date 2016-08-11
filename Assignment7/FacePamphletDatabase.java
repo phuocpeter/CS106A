@@ -29,7 +29,10 @@ public class FacePamphletDatabase implements FacePamphletConstants {
 		String profileName = profile.getName();
 		if (names.contains(profileName)) {
 			// Delete the existing profile
-			deleteProfile(profileName);
+			int index = names.indexOf(profileName);
+			database.add(index, profile);
+			database.remove(++index);
+			return;
 		}
 		// Add new profile
 		database.add(profile);

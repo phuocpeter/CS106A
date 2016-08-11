@@ -10,6 +10,7 @@ import acm.graphics.*;
 import acm.util.*;
 
 import java.awt.event.*;
+import java.util.*;
 
 import javax.swing.*;
 
@@ -101,33 +102,126 @@ public class FacePamphlet extends ConsoleProgram
 			break;	
 		case "Change Status":
 			if (!sttTextField.getText().equals("")) {
-				println("Change Status: " + sttTextField.getText());
+				changeStatusCommand();
 			}
 			break;
 		case "Change Picture":
 			if (!picTextField.getText().equals("")) {
-				println("Change Picture: " + picTextField.getText());
+				changePicCommand();
 			}
 			break;
 		case "Add Friend":
 			if (!friendTextField.getText().equals("")) {
-				println("Add Friend: " + friendTextField.getText());
+				addFriendCommand();
 			}
 			break;
 		default:
 			break;
 		}
+		if (currentProfile != null) {
+			println("---> Current Profile: " + currentProfile.toString());
+		} else {
+			println("---> No Current Profile");
+		}
 	}
     
-    /* Method: lookupCommand() */
+    /* Method: addFriendCommand() */
+    /**
+     * Handles add friend command.
+     */
+    private void addFriendCommand() {
+		if (currentProfile == null) {
+			promptNoProfile();
+			return;
+		}
+		String name = friendTextField.getText();
+		if (!db.containsProfile(name)) {
+			println("That friend does not exist");
+			return;
+		}
+		if (friendExist(name, currentProfile)) {
+			println("That friend is already in the list");
+			return;
+		}
+		// Adds friend reciprocally
+		currentProfile.addFriend(name);
+		db.addProfile(currentProfile);
+		FacePamphletProfile friendProfile = db.getProfile(name);
+		friendProfile.addFriend(currentProfile.getName());
+		db.addProfile(friendProfile);
+		println("Friend Added");
+	}
+    
+    /* Method: friendExist() */
+    /**
+     * Checks if the friend is already in the profile's friend list.
+     * @param name the name of the friend
+     * @param profile the profile to check
+     * @return true if the name of the friend already existed.
+     */
+    private boolean friendExist(String name, FacePamphletProfile profile) {
+    	Iterator<String> friendList = profile.getFriends();
+		while (friendList.hasNext()) {
+			if (friendList.next().equals(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/* Method: changePicCommand() */
+    /**
+     * Handles change picture command.
+     */
+    private void changePicCommand() {
+		if (currentProfile == null) {
+			promptNoProfile();
+			return;
+		}
+		GImage image = null;
+		try {
+			image = new GImage(picTextField.getText());
+			currentProfile.setImage(image);
+			db.addProfile(currentProfile);
+			println("Picture Updated");
+		} catch (ErrorException ex) {
+			println("Error with image file: " + ex.getMessage());
+		}
+	}
+    
+    /* Method: changeStatusCommand() */
+    /**
+     * Handles change status command.
+     */
+    private void changeStatusCommand() {
+		if (currentProfile == null) {
+			promptNoProfile();
+			return;
+		}
+		currentProfile.setStatus(sttTextField.getText());
+		db.addProfile(currentProfile);
+		println("Status Updated");
+	}
+
+    /* Method: promptNoProfile() */
+    /**
+     * Prompts the user that there is no profile selected.
+     */
+	private void promptNoProfile() {
+		println("Please select a profile");
+	}
+
+	/* Method: lookupCommand() */
     /**
      * Handles lookup command.
      */
     private void lookupCommand() {
+    	currentProfile = null;
     	String name = nameTextField.getText();
     	if (db.containsProfile(name)) {
     		FacePamphletProfile profile = db.getProfile(name);
     		println("Lookup: " + profile.toString());
+    		currentProfile = profile;
     		return;
     	}
     	println("Lookup: profile with name " + name + " does not exist");
@@ -138,6 +232,7 @@ public class FacePamphlet extends ConsoleProgram
      * Handles delete command.
      */
     private void deleteCommand() {
+    	currentProfile = null;
     	String name = nameTextField.getText();
     	if (db.containsProfile(name)) {
     		db.deleteProfile(name);
@@ -152,6 +247,7 @@ public class FacePamphlet extends ConsoleProgram
      * Handles add command.
      */
     private void addCommand() {
+    	currentProfile = null;
     	FacePamphletProfile profile;
     	String name = nameTextField.getText();
     	if (db.containsProfile(name)) {
@@ -162,8 +258,10 @@ public class FacePamphlet extends ConsoleProgram
     	profile = new FacePamphletProfile(name);
     	db.addProfile(profile);
     	println("Add: new profile: " + profile.toString());
+    	currentProfile = profile;
 	}
 
 	private JTextField nameTextField, sttTextField, friendTextField, picTextField;
     private FacePamphletDatabase db;
+    private FacePamphletProfile currentProfile = null;
 }
