@@ -22,6 +22,17 @@ public class FacePamphlet extends ConsoleProgram
 	public void init() {
 		setupInteractors();
 		this.addActionListeners();
+		
+		// Temp
+		FacePamphletProfile me = new FacePamphletProfile("Peter");
+		me.setStatus("coding");
+		println(me.toString());
+		
+		me.addFriend("John");
+		println(me.toString());
+		
+		me.addFriend("Kathy");
+		println(me.toString());
     }
   
 	/* Method: setupInteractors() */
