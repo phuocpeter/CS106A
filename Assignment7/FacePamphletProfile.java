@@ -109,7 +109,7 @@ public class FacePamphletProfile implements FacePamphletConstants {
 	 * would return the string: "Alice (coding): Don, Chelsea, Bob"
 	 */ 
 	public String toString() {
-		String desc = name + "(" + status + "): ";
+		String desc = name + " (" + status + "): ";
 		Iterator<String> friendsList = this.getFriends();
 		while (friendsList.hasNext()) {
 			desc += friendsList.next();

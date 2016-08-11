@@ -16,7 +16,6 @@ public class FacePamphletDatabase implements FacePamphletConstants {
 	 * the database.
 	 */
 	public FacePamphletDatabase() {
-		// You fill this in
 	}
 	
 	
@@ -27,7 +26,14 @@ public class FacePamphletDatabase implements FacePamphletConstants {
 	 * the new profile passed in.
 	 */
 	public void addProfile(FacePamphletProfile profile) {
-		// You fill this in
+		String profileName = profile.getName();
+		if (names.contains(profileName)) {
+			// Delete the existing profile
+			deleteProfile(profileName);
+		}
+		// Add new profile
+		database.add(profile);
+		names.add(profileName);
 	}
 
 	
@@ -37,7 +43,9 @@ public class FacePamphletDatabase implements FacePamphletConstants {
 	 * the given name, the method returns null.
 	 */
 	public FacePamphletProfile getProfile(String name) {
-		// You fill this in.  Currently always returns null.
+		if (names.contains(name)) {
+			return database.get(names.indexOf(name));
+		}
 		return null;
 	}
 	
@@ -52,17 +60,38 @@ public class FacePamphletDatabase implements FacePamphletConstants {
 	 * the database is unchanged after calling this method.
 	 */
 	public void deleteProfile(String name) {
-		// You fill this in
+		if (names.contains(name)) {
+			database.remove(names.indexOf(name));
+			names.remove(name);
+			deleteExistenceOf(name);
+		}
 	}
 
-	
+	/* Method: deleteExistenceOf() */
+	/**
+	 * Deletes all the occurrences of this name in the database.
+	 * @param name profile name to be deleted
+	 */
+	private void deleteExistenceOf(String name) {
+		Iterator<FacePamphletProfile> profiles = database.iterator();
+		while (profiles.hasNext()) {
+			FacePamphletProfile profile = profiles.next();
+			profile.removeFriend(name);
+		}
+	}
+
+
 	/** 
 	 * This method returns true if there is a profile in the database 
 	 * that has the given name.  It returns false otherwise.
 	 */
 	public boolean containsProfile(String name) {
-		// You fill this in.  Currently always returns false.
+		if (names.contains(name)) {
+			return true;
+		}
 		return false;
 	}
 
+	private ArrayList<FacePamphletProfile> database = new ArrayList<FacePamphletProfile>();
+	private ArrayList<String> names = new ArrayList<String>();
 }

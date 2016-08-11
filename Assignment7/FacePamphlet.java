@@ -8,7 +8,9 @@
 import acm.program.*;
 import acm.graphics.*;
 import acm.util.*;
+
 import java.awt.event.*;
+
 import javax.swing.*;
 
 public class FacePamphlet extends ConsoleProgram 
@@ -23,16 +25,7 @@ public class FacePamphlet extends ConsoleProgram
 		setupInteractors();
 		this.addActionListeners();
 		
-		// Temp
-		FacePamphletProfile me = new FacePamphletProfile("Peter");
-		me.setStatus("coding");
-		println(me.toString());
-		
-		me.addFriend("John");
-		println(me.toString());
-		
-		me.addFriend("Kathy");
-		println(me.toString());
+		db = new FacePamphletDatabase();
     }
   
 	/* Method: setupInteractors() */
@@ -93,17 +86,17 @@ public class FacePamphlet extends ConsoleProgram
 		switch (command) {
 		case "Add":
 			if (!nameTextField.getText().equals("")) {
-				println("Add: " + nameTextField.getText());
+				addCommand();
 			}
 			break;
 		case "Delete":
 			if (!nameTextField.getText().equals("")) {
-				println("Delete: " + nameTextField.getText());
+				deleteCommand();
 			}
 			break;
 		case "Lookup":
 			if (!nameTextField.getText().equals("")) {
-				println("Lookup: " + nameTextField.getText());
+				lookupCommand();
 			}
 			break;	
 		case "Change Status":
@@ -126,6 +119,51 @@ public class FacePamphlet extends ConsoleProgram
 		}
 	}
     
-    private JTextField nameTextField, sttTextField, friendTextField, picTextField;
+    /* Method: lookupCommand() */
+    /**
+     * Handles lookup command.
+     */
+    private void lookupCommand() {
+    	String name = nameTextField.getText();
+    	if (db.containsProfile(name)) {
+    		FacePamphletProfile profile = db.getProfile(name);
+    		println("Lookup: " + profile.toString());
+    		return;
+    	}
+    	println("Lookup: profile with name " + name + " does not exist");
+	}
 
+	/* Method: deleteCommand() */
+    /**
+     * Handles delete command.
+     */
+    private void deleteCommand() {
+    	String name = nameTextField.getText();
+    	if (db.containsProfile(name)) {
+    		db.deleteProfile(name);
+    		println("Delete: profile of " + name + " deleted");
+    		return;
+    	}
+    	println("Delete: profile with name " + name + " does not exist");
+	}
+
+	/* Method: addCommand() */
+    /**
+     * Handles add command.
+     */
+    private void addCommand() {
+    	FacePamphletProfile profile;
+    	String name = nameTextField.getText();
+    	if (db.containsProfile(name)) {
+    		profile = db.getProfile(name);
+    		println("Add: profile for " + name + " already exists: " + profile.toString());
+    		return;
+		}
+    	profile = new FacePamphletProfile(name);
+    	db.addProfile(profile);
+    	println("Add: new profile: " + profile.toString());
+	}
+
+	private JTextField nameTextField, sttTextField, friendTextField, picTextField;
+    private FacePamphletDatabase db;
 }
